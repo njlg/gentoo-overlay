@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<layman>
-  <overlay contact="nathan@njlg.info" name="njlg_overlay" src="git://github.com/njlg/gentoo-overlay.git" status="unofficial" type="git">
-      <link>git://github.com/njlg/gentoo-overlay.git</link>
-      <description>NJLG's Gentoo Overlay</description>
-  </overlay>
-</layman>
+<!DOCTYPE repositories SYSTEM "/dtd/repositories.dtd">
+<repositories xmlns="" version="1.0">
+  <repo quality="experimental" status="unofficial">
+    <name>njlg</name>
+    <description lang="en">NJLG's Gentoo Overlay</description>
+    <homepage>https://github.com/njlg/gentoo-overlay/</homepage>
+    <owner type="person">
+      <email>nathan@njlg.info</email>
+      <name>Nathan Levin-Greenhaw</name>
+    </owner>
+    <source type="git">https://github.com/njlg/gentoo-overlay.git</source>
+  </repo>
+</repositories>
