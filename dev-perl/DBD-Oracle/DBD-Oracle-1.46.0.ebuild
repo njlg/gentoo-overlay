@@ -1,0 +1,29 @@
+# Copyright 1999-2011 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: /var/cvsroot/gentoo-x86/dev-perl/DBD-mysql/DBD-mysql-4.20.0.ebuild,v 1.1 2011/08/30 18:29:01 tove Exp $
+
+EAPI=4
+
+MODULE_AUTHOR=PYTHIAN
+MODULE_VERSION=1.46
+inherit eutils perl-module
+
+DESCRIPTION="Oracle database driver for the DBI module"
+
+SLOT="0"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd ~x86-freebsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
+
+RDEPEND="
+	dev-db/oracle-instantclient-basic
+	dev-db/oracle-instantclient-sqlplus
+	dev-perl/DBI
+"
+DEPEND="
+	${RDEPEND}
+"
+
+LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+
+src_prepare() {
+	rm -rf README-files
+}

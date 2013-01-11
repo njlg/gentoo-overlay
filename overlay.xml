@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layman>
+  <overlay contact="nathan@njlg.info" name="njlg_overlay" src="git://github.com/njlg/gentoo-overlay.git" status="unofficial" type="git">
+      <link>git://github.com/njlg/gentoo-overlay.git</link>
+      <description>NJLG's Gentoo Overlay</description>
+  </overlay>
+</layman>
