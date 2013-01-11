@@ -1,0 +1,307 @@
+diff -urN clean/configure.ac SQUIRREL3/configure.ac
+--- clean/configure.ac	1969-12-31 16:00:00.000000000 -0800
++++ SQUIRREL3/configure.ac	2013-01-10 20:51:45.087347609 -0800
+@@ -0,0 +1,29 @@
++AC_INIT([squirrel],[2.2.4],[http://squirrel-lang.org/])
++
++# recommended by libtoolize:
++AC_CONFIG_MACRO_DIR([m4])
++
++AM_INIT_AUTOMAKE([foreign dist-bzip2 subdir-objects])
++
++AC_PROG_LIBTOOL
++AC_PROG_CC_C_O
++AC_PROG_CXX
++
++AC_ARG_ENABLE([doc],
++	[AS_HELP_STRING([--disable-doc], [Control whether or not the API docs (pdfs) are installed.])],
++	[enable_docs=$enableval],
++	[enable_docs=yes])
++AM_CONDITIONAL([ENABLE_DOC],
++	[test "x$enable_docs" = "xyes"])
++
++AC_ARG_ENABLE([examples],
++	[AS_HELP_STRING([--disable-exampels], [Control whether or not examples of libsquirrel use are installed.])],
++	[enable_examples=$enableval],
++	[enable_examples=yes])
++AM_CONDITIONAL([ENABLE_EXAMPLES],
++	[test "x$enable_examples" = "xyes"])
++
++AC_CONFIG_FILES([Makefile
++libsquirrel.pc
++libsqstdlib.pc])
++AC_OUTPUT
+diff -urN clean/libsqstdlib.pc.in SQUIRREL3/libsqstdlib.pc.in
+--- clean/libsqstdlib.pc.in	1969-12-31 16:00:00.000000000 -0800
++++ SQUIRREL3/libsqstdlib.pc.in	2013-01-10 20:51:45.105349897 -0800
+@@ -0,0 +1,14 @@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++includedir=@includedir@
++
++Name: @PACKAGE_NAME@
++Description: A library for libsquirrel users
++Version: @VERSION@
++URL: @PACKAGE_BUGREPORT@
++Libs: -L${libdir} -lsqstdlib
++# I don't like hard-coding this here, but it's an internal
++# dependency so it's justified.
++Libs.private: -lsquirrel
++Cflags: -I${includedir}
+diff -urN clean/libsquirrel.pc.in SQUIRREL3/libsquirrel.pc.in
+--- clean/libsquirrel.pc.in	1969-12-31 16:00:00.000000000 -0800
++++ SQUIRREL3/libsquirrel.pc.in	2013-01-10 20:51:45.723428452 -0800
+@@ -0,0 +1,11 @@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++includedir=@includedir@
++
++Name: @PACKAGE_NAME@
++Description: A dynamic scripting language for games
++Version: @VERSION@
++URL: @PACKAGE_BUGREPORT@
++Libs: -L${libdir} -lsquirrel
++Cflags: -I${includedir}
+diff -urN clean/Makefile SQUIRREL3/Makefile
+--- clean/Makefile	2006-03-05 08:03:53.000000000 -0800
++++ SQUIRREL3/Makefile	1969-12-31 16:00:00.000000000 -0800
+@@ -1,18 +0,0 @@
+-
+-SQUIRREL=.
+-MAKE=make
+-
+-sq32:
+-	cd squirrel; $(MAKE) 
+-	cd sqstdlib; $(MAKE) 
+-	cd sq; $(MAKE) 
+-
+-sqprof:
+-	cd squirrel; $(MAKE) sqprof
+-	cd sqstdlib; $(MAKE) sqprof
+-	cd sq; $(MAKE) sqprof
+-
+-sq64:
+-	cd squirrel; $(MAKE) sq64
+-	cd sqstdlib; $(MAKE) sq64
+-	cd sq; $(MAKE) sq64
+diff -urN clean/Makefile.am SQUIRREL3/Makefile.am
+--- clean/Makefile.am	1969-12-31 16:00:00.000000000 -0800
++++ SQUIRREL3/Makefile.am	2013-01-10 20:51:45.056343670 -0800
+@@ -0,0 +1,89 @@
++# autoreconf variables, recommended by libtoolize
++ACLOCAL_FLAGS = -I m4
++
++AM_CPPFLAGS = -I$(top_srcdir)/include
++
++# custom installation directories
++examplesdir = $(docdir)/examples
++pkgconfigdir = $(libdir)/pkgconfig
++
++# installed things
++if ENABLE_DOC
++dist_doc_DATA = doc/sqstdlib3.pdf \
++	doc/squirrel3.pdf
++endif
++if ENABLE_EXAMPLES
++dist_examples_DATA = samples/ackermann.nut \
++	samples/array.nut \
++	samples/class.nut \
++	samples/classattributes.nut \
++	samples/coroutines.nut \
++	samples/delegation.nut \
++	samples/fibonacci.nut \
++	samples/flow.nut \
++	samples/generators.nut \
++	samples/hello.nut \
++	samples/list.nut \
++	samples/loops.nut \
++	samples/matrix.nut \
++	samples/metamethods.nut \
++	samples/methcall.nut \
++	samples/tailstate.nut
++endif
++
++nodist_pkgconfig_DATA = libsqstdlib.pc \
++	libsquirrel.pc
++bin_PROGRAMS = sq/sq
++lib_LTLIBRARIES = libsquirrel.la \
++	libsqstdlib.la
++include_HEADERS = include/sqstdaux.h \
++	include/sqstdblob.h \
++	include/sqstdio.h \
++	include/sqstdmath.h \
++	include/sqstdstring.h \
++	include/sqstdsystem.h \
++	include/squirrel.h
++
++
++# sources for installed things
++
++libsqstdlib_la_SOURCES = sqstdlib/sqstdaux.cpp \
++	sqstdlib/sqstdblob.cpp sqstdlib/sqstdblobimpl.h \
++	sqstdlib/sqstdio.cpp \
++	sqstdlib/sqstdmath.cpp \
++	sqstdlib/sqstdrex.cpp \
++	sqstdlib/sqstdstream.cpp sqstdlib/sqstdstream.h \
++	sqstdlib/sqstdstring.cpp \
++	sqstdlib/sqstdsystem.cpp
++libsqstdlib_la_LDFLAGS = -version-info 3:0:0
++libsqstdlib_la_LIBADD = libsquirrel.la
++
++libsquirrel_la_SOURCES = squirrel/sqapi.cpp \
++	squirrel/sqarray.h \
++	squirrel/sqbaselib.cpp \
++	squirrel/sqclass.cpp squirrel/sqclass.h \
++	squirrel/sqclosure.h \
++	squirrel/sqcompiler.cpp squirrel/sqcompiler.h \
++	squirrel/sqdebug.cpp \
++	squirrel/sqfuncproto.h \
++	squirrel/sqfuncstate.cpp squirrel/sqfuncstate.h \
++	squirrel/sqlexer.cpp squirrel/sqlexer.h \
++	squirrel/sqmem.cpp \
++	squirrel/sqobject.cpp squirrel/sqobject.h \
++	squirrel/sqopcodes.h \
++	squirrel/sqpcheader.h \
++	squirrel/sqstate.cpp squirrel/sqstate.h \
++	squirrel/sqstring.h \
++	squirrel/sqtable.cpp squirrel/sqtable.h \
++	squirrel/squserdata.h \
++	squirrel/squtils.h \
++	squirrel/sqvm.cpp squirrel/sqvm.h
++libsquirrel_la_LDFLAGS = -version-info 3:0:0
++
++sq_sq_SOURCES = sq/sq.c
++sq_sq_LDADD = libsqstdlib.la
++
++EXTRA_DIST = COMPILE COPYRIGHT HISTORY README \
++	doc/sqstdlib2.chm doc/squirrel2.chm \
++	squirrel.dsw sq/sq.dsp squirrel/squirrel.dsp sqstdlib/sqstdlib.dsp \
++	etc/minimal.c etc/test.nut
+diff -urN clean/sq/Makefile SQUIRREL3/sq/Makefile
+--- clean/sq/Makefile	2012-02-11 08:55:55.000000000 -0800
++++ SQUIRREL3/sq/Makefile	1969-12-31 16:00:00.000000000 -0800
+@@ -1,21 +0,0 @@
+-SQUIRREL= ..
+-
+-
+-OUT= $(SQUIRREL)/bin/sq
+-INCZ= -I$(SQUIRREL)/include -I. -I$(SQUIRREL)/sqlibs
+-LIBZ= -L$(SQUIRREL)/lib 
+-LIB= -lsquirrel -lsqstdlib
+-
+-OBJS= sq.o
+-	
+-SRCS= sq.c
+-	
+-	
+-sq32:
+-	g++ -O2 -s -fno-exceptions -fno-rtti -o $(OUT) $(SRCS) $(INCZ) $(LIBZ) $(LIB)
+-
+-sqprof:
+-	g++ -O2 -pg -fno-exceptions -fno-rtti -pie -gstabs -g3 -o $(OUT) $(SRCS) $(INCZ) $(LIBZ) $(LIB)
+-	
+-sq64:
+-	g++ -O2 -s -m64 -fno-exceptions -fno-rtti -D_SQ64 -o $(OUT) $(SRCS) $(INCZ) $(LIBZ) $(LIB)
+diff -urN clean/sqstdlib/Makefile SQUIRREL3/sqstdlib/Makefile
+--- clean/sqstdlib/Makefile	2011-04-09 13:56:42.000000000 -0700
++++ SQUIRREL3/sqstdlib/Makefile	1969-12-31 16:00:00.000000000 -0800
+@@ -1,41 +0,0 @@
+-SQUIRREL= ..
+-
+-
+-OUT= $(SQUIRREL)/lib/libsqstdlib.a
+-INCZ= -I$(SQUIRREL)/include -I. -Iinclude
+-
+-OBJS= \
+-	sqstdblob.o \
+-	sqstdio.o \
+-	sqstdstream.o \
+-	sqstdmath.o \
+-	sqstdsystem.o \
+-	sqstdstring.o \
+-	sqstdaux.o \
+-	sqstdrex.o
+-	
+-SRCS= \
+-	sqstdblob.cpp \
+-	sqstdio.cpp \
+-	sqstdstream.cpp \
+-	sqstdmath.cpp \
+-	sqstdsystem.cpp \
+-	sqstdstring.cpp \
+-	sqstdaux.cpp \
+-	sqstdrex.cpp
+-	
+-	
+-sq32:
+-	gcc -O2 -fno-exceptions -fno-rtti -Wall -fno-strict-aliasing -c $(SRCS) $(INCZ)
+-	ar rc $(OUT) *.o
+-	rm *.o
+-
+-sqprof:
+-	gcc -O2 -pg -fno-exceptions -fno-rtti -pie -gstabs -g3 -Wall -fno-strict-aliasing -c $(SRCS) $(INCZ)
+-	ar rc $(OUT) *.o
+-	rm *.o
+-	
+-sq64:
+-	gcc -O2 -m64 -fno-exceptions -D_SQ64 -fno-rtti -Wall -fno-strict-aliasing -c $(SRCS) $(INCZ)
+-	ar rc $(OUT) *.o
+-	rm *.o
+diff -urN clean/squirrel/Makefile SQUIRREL3/squirrel/Makefile
+--- clean/squirrel/Makefile	2012-02-11 08:56:02.000000000 -0800
++++ SQUIRREL3/squirrel/Makefile	1969-12-31 16:00:00.000000000 -0800
+@@ -1,52 +0,0 @@
+-SQUIRREL= ..
+-
+-
+-OUT= $(SQUIRREL)/lib/libsquirrel.a
+-INCZ= -I$(SQUIRREL)/include -I. -Iinclude
+-DEFS= 
+-LIB=	
+-
+-OBJS= \
+-	sqapi.o \
+-	sqbaselib.o \
+-	sqfuncstate.o \
+-	sqdebug.o \
+-	sqlexer.o \
+-	sqobject.o \
+-	sqcompiler.o \
+-	sqstate.o \
+-	sqtable.o \
+-	sqmem.o \
+-	sqvm.o \
+-	sqclass.o
+-	
+-SRCS= \
+-	sqapi.cpp \
+-	sqbaselib.cpp \
+-	sqfuncstate.cpp \
+-	sqdebug.cpp \
+-	sqlexer.cpp \
+-	sqobject.cpp \
+-	sqcompiler.cpp \
+-	sqstate.cpp \
+-	sqtable.cpp \
+-	sqmem.cpp \
+-	sqvm.cpp \
+-	sqclass.cpp
+-
+-	
+-	
+-sq32:
+-	gcc -O2 -fno-exceptions -fno-rtti -Wall -fno-strict-aliasing -c $(SRCS) $(INCZ) $(DEFS)
+-	ar rc $(OUT) *.o
+-	rm *.o
+-
+-sqprof:
+-	gcc -O2 -pg -fno-exceptions -fno-rtti -pie -gstabs -g3 -Wall -fno-strict-aliasing -c $(SRCS) $(INCZ) $(DEFS)
+-	ar rc $(OUT) *.o
+-	rm *.o
+-
+-sq64:
+-	gcc -O2 -m64 -D_SQ64 -fno-exceptions -fno-rtti -Wall -fno-strict-aliasing -c $(SRCS) $(INCZ) $(DEFS)
+-	ar rc $(OUT) *.o
+-	rm *.o
