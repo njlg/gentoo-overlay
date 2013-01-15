@@ -173,7 +173,7 @@ diff -urN clean/Makefile.am SQUIRREL3/Makefile.am
 +libsquirrel_la_LDFLAGS = -release 3.0.4
 +
 +sq_sq_SOURCES = sq/sq.c
-+sq_sq_LDADD = libsqstdlib.la
++sq_sq_LDADD = libsqstdlib.la libsquirrel.la
 +
 +EXTRA_DIST = COMPILE COPYRIGHT HISTORY README \
 +	doc/sqstdlib2.chm doc/squirrel2.chm \
