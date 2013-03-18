@@ -2,7 +2,7 @@ diff -urN clean/configure.ac SQUIRREL3/configure.ac
 --- clean/configure.ac	1969-12-31 16:00:00.000000000 -0800
 +++ SQUIRREL3/configure.ac	2013-01-10 20:51:45.087347609 -0800
 @@ -0,0 +1,29 @@
-+AC_INIT([squirrel],[2.2.4],[http://squirrel-lang.org/])
++AC_INIT([squirrel],[3.0.4],[http://squirrel-lang.org/])
 +
 +# recommended by libtoolize:
 +AC_CONFIG_MACRO_DIR([m4])
@@ -147,7 +147,7 @@ diff -urN clean/Makefile.am SQUIRREL3/Makefile.am
 +	sqstdlib/sqstdstream.cpp sqstdlib/sqstdstream.h \
 +	sqstdlib/sqstdstring.cpp \
 +	sqstdlib/sqstdsystem.cpp
-+libsqstdlib_la_LDFLAGS = -version-info 3:0:0
++libsqstdlib_la_LDFLAGS = -release 3.0.4
 +libsqstdlib_la_LIBADD = libsquirrel.la
 +
 +libsquirrel_la_SOURCES = squirrel/sqapi.cpp \
@@ -170,10 +170,10 @@ diff -urN clean/Makefile.am SQUIRREL3/Makefile.am
 +	squirrel/squserdata.h \
 +	squirrel/squtils.h \
 +	squirrel/sqvm.cpp squirrel/sqvm.h
-+libsquirrel_la_LDFLAGS = -version-info 3:0:0
++libsquirrel_la_LDFLAGS = -release 3.0.4
 +
 +sq_sq_SOURCES = sq/sq.c
-+sq_sq_LDADD = libsqstdlib.la
++sq_sq_LDADD = libsqstdlib.la libsquirrel.la
 +
 +EXTRA_DIST = COMPILE COPYRIGHT HISTORY README \
 +	doc/sqstdlib2.chm doc/squirrel2.chm \
