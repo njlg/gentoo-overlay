@@ -24,6 +24,12 @@ DEPEND="
 
 LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
 
+perl-module_src_configure() {
+	myconf="-l"
+	debug-print-function $FUNCNAME "$@"
+	perl-module_src_prep
+}
+
 src_prepare() {
 	rm -rf README-files
 }
