@@ -1,0 +1,103 @@
+diff -urN rethinkdb-1.4.1/configure patched/configure
+--- rethinkdb-1.4.1/configure	2013-03-15 00:01:10.000000000 -0700
++++ patched/configure	2013-03-29 09:42:17.955850371 -0700
+@@ -701,7 +701,7 @@
+ # Find a static library and print it's path
+ static_lib_lookup () {
+     for path in $try_lib_paths; do
+-	local l=$path/lib$1.a
++	local l=$path/lib$1.so
+ 	test -f $l && echo $l && return 0
+     done
+ }
+diff -urN rethinkdb-1.4.1/external/protobuf-plugin-closure/Makefile patched/external/protobuf-plugin-closure/Makefile
+--- rethinkdb-1.4.1/external/protobuf-plugin-closure/Makefile	2013-03-14 13:49:14.000000000 -0700
++++ patched/external/protobuf-plugin-closure/Makefile	2013-03-29 10:01:50.875861007 -0700
+@@ -58,8 +58,8 @@
+ 	./js/protoc_gen_js.cc \
+ 	./js/javascript_package.pb.cc \
+ 	./js/int64_encoding.pb.cc \
+-	$(LIB)/libprotobuf.a \
+-	$(LIB)/libprotoc.a \
++	$(LIB)/libprotobuf.so \
++	$(LIB)/libprotoc.so \
+ 	-o ./protoc-gen-js \
+ 	-lpthread
+ 
+@@ -73,8 +73,8 @@
+ 	./ccjs/code_generator.cc \
+ 	./ccjs/protoc_gen_ccjs.cc \
+ 	./js/int64_encoding.pb.cc \
+-	$(LIB)/libprotobuf.a \
+-	$(LIB)/libprotoc.a \
++	$(LIB)/libprotobuf.so \
++	$(LIB)/libprotoc.so \
+ 	-o ./protoc-gen-ccjs \
+ 	-lpthread
+ 
+diff -urN rethinkdb-1.4.1/mk/install.mk patched/mk/install.mk
+--- rethinkdb-1.4.1/mk/install.mk	2013-03-14 13:49:14.000000000 -0700
++++ patched/mk/install.mk	2013-03-30 13:53:25.666770433 -0700
+@@ -75,10 +75,10 @@
+ 	$P INSTALL $^ $(DESTDIR)$(bin_dir)
+ 	install -m755 -d $(DESTDIR)$(bin_dir)
+ 	install -m755 $(BUILD_DIR)/$(SERVER_EXEC_NAME) $(DESTDIR)$(FULL_SERVER_EXEC_NAME_VERSIONED)
+-ifeq ($(STRIP_ON_INSTALL),1)
+-	$P STRIP $(DESTDIR)$(FULL_SERVER_EXEC_NAME_VERSIONED)
+-	$(STRIP_UNNEEDED) $(DESTDIR)$(FULL_SERVER_EXEC_NAME_VERSIONED)
+-endif
++#ifeq ($(STRIP_ON_INSTALL),1)
++#	$P STRIP $(DESTDIR)$(FULL_SERVER_EXEC_NAME_VERSIONED)
++#	$(STRIP_UNNEEDED) $(DESTDIR)$(FULL_SERVER_EXEC_NAME_VERSIONED)
++#endif
+ 
+ .PHONY: install-manpages
+ install-manpages: $(ASSETS_DIR)/man/rethinkdb.1
+diff -urN rethinkdb-1.4.1/mk/support.mk patched/mk/support.mk
+--- rethinkdb-1.4.1/mk/support.mk	2013-03-15 02:45:49.000000000 -0700
++++ patched/mk/support.mk	2013-03-29 09:55:01.745857297 -0700
+@@ -34,12 +34,12 @@
+ LIBUNWIND_DIR := $(TC_BUILD_DIR)/libunwind
+ LIBUNWIND_SRC_DIR := $(TC_SRC_DIR)/libunwind
+ UNWIND_INT_LIB := # TODO
+-TCMALLOC_MINIMAL_INT_LIB := $(SUPPORT_INST_DIR)/lib/libtcmalloc_minimal.a
++TCMALLOC_MINIMAL_INT_LIB := $(SUPPORT_INST_DIR)/lib/libtcmalloc_minimal.so
+ TC_PROTOC_INT_EXE := $(SUPPORT_INST_DIR)/bin/protoc
+ TC_PROTOC_INT_BIN_DIR := $(SUPPORT_INST_DIR)/bin
+ TC_PROTOC_INT_LIB_DIR := $(SUPPORT_INST_DIR)/lib
+ TC_PROTOC_INT_INC_DIR := $(SUPPORT_INST_DIR)/include
+-PROTOBUF_INT_LIB := $(TC_PROTOC_INT_LIB_DIR)/libprotobuf.a
++PROTOBUF_INT_LIB := $(TC_PROTOC_INT_LIB_DIR)/libprotobuf.so
+ TC_NODE_INT_EXE := $(SUPPORT_DIR)/usr/bin/node
+ TC_NPM_INT_EXE := $(SUPPORT_DIR)/usr/bin/npm
+ TC_LESSC_INT_EXE := $(SUPPORT_DIR)/usr/bin/lessc
+@@ -47,7 +47,7 @@
+ TC_HANDLEBARS_INT_EXE := $(SUPPORT_DIR)/usr/bin/handlebars
+ V8_SRC_DIR := $(TC_SRC_DIR)/v8
+ V8_INT_DIR := $(TC_BUILD_DIR)/v8
+-V8_INT_LIB := $(V8_INT_DIR)/libv8.a
++V8_INT_LIB := $(V8_INT_DIR)/libv8.so
+ 
+ .PHONY: support
+ support: $(foreach v,$(shell echo $(FETCH_LIST) | tr a-z A-Z), \
+diff -urN rethinkdb-1.4.1/src/build.mk patched/src/build.mk
+--- rethinkdb-1.4.1/src/build.mk	2013-03-16 00:01:35.000000000 -0700
++++ patched/src/build.mk	2013-03-29 09:42:58.225850736 -0700
+@@ -345,12 +345,12 @@
+ $(BUILD_DIR)/$(SERVER_EXEC_NAME): $(SERVER_EXEC_OBJS) | $(BUILD_DIR)/. $(TCMALLOC_DEP)
+ 	$P LD $@
+ 	$(RT_CXX) $(RT_LDFLAGS) $(SERVER_EXEC_OBJS) $(LIBRARY_PATHS) -o $(BUILD_DIR)/$(SERVER_EXEC_NAME) $(LD_OUTPUT_FILTER)
+-ifeq ($(NO_TCMALLOC),0)
++#ifeq ($(NO_TCMALLOC),0)
+ # TODO: c++filt is not available everywhere
+-	@objdump -T $(BUILD_DIR)/$(SERVER_EXEC_NAME) | c++filt | grep -q 'tcmalloc::\|google_malloc' || \
+-		(echo "    Failed to link in TCMalloc. You may have to run ./configure with the --without-tcmalloc flag." && \
+-		false)
+-endif
++#	@objdump -T $(BUILD_DIR)/$(SERVER_EXEC_NAME) | c++filt | grep -q 'tcmalloc::\|google_malloc' || \
++#		(echo "    Failed to link in TCMalloc. You may have to run ./configure with the --without-tcmalloc flag." && \
++#		false)
++#endif
+ 
+ # The unittests use gtest, which uses macros that expand into switch statements which don't contain
+ # default cases. So we have to remove the -Wswitch-default argument for them.
