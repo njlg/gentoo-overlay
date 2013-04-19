@@ -1,8 +1,8 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-php/php-openid/php-openid-2.2.2.ebuild,v 1.2 2012/01/28 14:08:19 mabi Exp $
+# $Header $
 
-EAPI="3"
+EAPI="5"
 PHP_EXT_NAME="redis"
 #USE_PHP="php5-3 php5-4"
 USE_PHP="php5-4"
@@ -27,15 +27,3 @@ IUSE="tests igbinary"
 
 S="${WORKDIR}/${MY_P2}"
 PHP_EXT_S=${S}
-
-#src_install() {
-#	insinto "/usr/share/php/${PN}"
-#	cd "${S}/Auth" && doins -r .
-#
-#	use examples && dodoc -r ../examples
-#}
-#
-#pkg_postinst() {
-#	elog "This ebuild can optionally make use of:"
-#	elog "    dev-php/PEAR-DB"
-#}
