@@ -1,0 +1,39 @@
+--- build.xml	2013-07-20 09:56:33.124279278 -0700
++++ build.patch.xml	2013-07-20 15:07:56.815313604 -0700
+@@ -282,11 +282,13 @@
+ 
+   <target name="init.extra.tasks" depends="init.maven.tasks" unless="init.extra.tasks.finished">
+     <artifact:dependencies pathId="extra.tasks.classpath" filesetId="extra.tasks.fileset">
++      <artifact:localRepository path="${basedir}/target/repository" />
+       <dependency groupId="biz.aQute" artifactId="bnd" version="1.50.0"/>
+     </artifact:dependencies>
+     <!-- Pax runner -->
+     <property name="pax.exam.version" value="2.5.0"/>
+     <artifact:dependencies pathId="pax.exam.classpath" filesetId="pax.exam.fileset">
++      <artifact:localRepository path="${basedir}/target/repository" />
+       <dependency groupId="org.ops4j.pax.exam" artifactId="pax-exam-container-native" version="${pax.exam.version}"/>
+       <dependency groupId="org.ops4j.pax.exam" artifactId="pax-exam-junit4" version="${pax.exam.version}"/>
+       <dependency groupId="org.ops4j.pax.exam" artifactId="pax-exam-link-assembly" version="${pax.exam.version}"/>
+@@ -305,8 +307,9 @@
+   <!-- Resolve maven dependencies -->
+   <target name="init.maven.jars" depends="init.maven.tasks">
+     <!-- This target has an issue where if the user directory does not exist, we BOMB. ugh. -->
+-    <mkdir dir="${user.home}/.m2/repository"/>
++    <mkdir dir="${basedir}/target/repository"/>
+     <artifact:dependencies pathId="dependency.classpath" filesetId="dependency.fileset">
++      <artifact:localRepository path="${basedir}/target/repository" />
+       <!--<dependency groupId="com.typesafe" artifactId="config" version="0.4.0"/>-->
+     </artifact:dependencies>
+   </target>
+@@ -2656,9 +2659,11 @@
+     <mkdir dir="${bc-build.dir}"/>
+     <!-- Pull down MIMA -->
+     <artifact:dependencies pathId="mima.classpath">
++      <artifact:localRepository path="${basedir}/target/repository" />
+       <dependency groupId="com.typesafe" artifactId="mima-reporter_2.9.2" version="0.1.5"/>
+     </artifact:dependencies>
+     <artifact:dependencies pathId="old.bc.classpath">
++      <artifact:localRepository path="${basedir}/target/repository" />
+       <dependency groupId="org.scala-lang" artifactId="scala-swing" version="2.10.0"/>
+       <dependency groupId="org.scala-lang" artifactId="scala-library" version="2.10.0"/>
+       <dependency groupId="org.scala-lang" artifactId="scala-reflect" version="2.10.0"/>
