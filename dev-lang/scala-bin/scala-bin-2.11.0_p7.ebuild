@@ -5,7 +5,8 @@
 EAPI="5"
 inherit eutils
 
-MY_P="scala-${PV}"
+MY_PV=${PV/_p/-M}
+MY_P="scala-${MY_PV^^}"
 
 DESCRIPTION="The Scala Programming Language. Official binary distribution."
 HOMEPAGE="http://www.scala-lang.org/"
@@ -33,10 +34,11 @@ src_install() {
 	insinto "$SCALADIR/lib"
 	doins lib/*.jar
 
-	# man pages should have a version
+	# man pages should be postfixed with version
+	#doman man/man1/*.1 || die
 	pushd man/man1
 	for m in *.1; do
-		newman $m `basename $m .1`-$P.1
+		newman $m `basename $m .1`-${P}.1
 	done
 	popd
 
