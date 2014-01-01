@@ -8,9 +8,12 @@ WANT_ANT_TASKS="ant-nodeps"
 CHECKREQS_MEMORY="1532M"
 inherit eutils check-reqs java-pkg-2 java-ant-2 versionator
 
+MY_PV=${PV/_p/-M}
+MY_P="scala-${MY_PV^^}"
+
 DESCRIPTION="The Scala Programming Language"
 HOMEPAGE="http://www.scala-lang.org/"
-SRC_URI="https://github.com/scala/scala/archive/v${PV}.tar.gz -> ${P}-sources.tar.gz"
+SRC_URI="https://github.com/scala/scala/archive/v${PV/_p/-M}.tar.gz -> ${P}-sources.tar.gz"
 LICENSE="Scala"
 SLOT="${P}"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux ~x86-macos"
@@ -22,6 +25,8 @@ DEPEND="virtual/jdk:1.6
 	app-admin/eselect-scala"
 RDEPEND=">=virtual/jre-1.6"
 
+S="${WORKDIR}/${MY_P}"
+
 pkg_setup() {
 	java-pkg-2_pkg_setup
 
@@ -32,6 +37,14 @@ pkg_setup() {
 	ewarn "(e.g. ${PN}-bin-${PV})"
 
 	check-reqs_pkg_setup
+}
+
+src_unpack() {
+	if [ "${A}" != "" ]; then
+		unpack ${A}
+		cd "${WORKDIR}"
+		mv scala-${PV/_rc/-RC} ${P}
+	fi
 }
 
 src_compile() {

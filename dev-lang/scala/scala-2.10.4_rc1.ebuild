@@ -10,7 +10,7 @@ inherit eutils check-reqs java-pkg-2 java-ant-2 versionator
 
 DESCRIPTION="The Scala Programming Language"
 HOMEPAGE="http://www.scala-lang.org/"
-SRC_URI="https://github.com/scala/scala/archive/v${PV}.tar.gz -> ${P}-sources.tar.gz"
+SRC_URI="https://github.com/scala/scala/archive/v${PV/_p/-M}.tar.gz -> ${P}-sources.tar.gz"
 LICENSE="Scala"
 SLOT="${P}"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux ~x86-macos"
@@ -32,6 +32,14 @@ pkg_setup() {
 	ewarn "(e.g. ${PN}-bin-${PV})"
 
 	check-reqs_pkg_setup
+}
+
+src_unpack() {
+	if [ "${A}" != "" ]; then
+		unpack ${A}
+		cd "${WORKDIR}"
+		mv scala-${PV/_rc/-RC} ${P}
+	fi
 }
 
 src_compile() {

@@ -5,7 +5,7 @@
 EAPI=4
 
 MODULE_AUTHOR=SHANCOCK
-MODULE_VERSION=20120714
+MODULE_VERSION=20121207
 inherit perl-module
 
 DESCRIPTION="Perl script indenter and beautifier"
