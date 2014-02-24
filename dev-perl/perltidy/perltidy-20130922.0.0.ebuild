@@ -4,8 +4,9 @@
 
 EAPI=4
 
+MY_PN=Perl-Tidy
 MODULE_AUTHOR=SHANCOCK
-MODULE_VERSION=20121207
+MODULE_VERSION=20130922
 inherit perl-module
 
 DESCRIPTION="Perl script indenter and beautifier"
@@ -13,7 +14,7 @@ HOMEPAGE="http://perltidy.sourceforge.net/ ${HOMEPAGE}"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~ppc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~sparc-solaris"
+KEYWORDS="amd64 ppc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~sparc-solaris"
 IUSE=""
 
 SRC_TEST="do"
