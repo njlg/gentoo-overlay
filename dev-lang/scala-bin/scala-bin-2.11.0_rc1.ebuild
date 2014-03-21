@@ -6,7 +6,9 @@ EAPI="5"
 inherit eutils
 
 MY_PV=${PV/_p/-M}
-MY_P="scala-${MY_PV^^}"
+MY_PV=${MY_PV/_rc/-RC}
+MY_PV=${MY_PV^^}
+MY_P="scala-${MY_PV}"
 
 DESCRIPTION="The Scala Programming Language. Official binary distribution."
 HOMEPAGE="http://www.scala-lang.org/"
